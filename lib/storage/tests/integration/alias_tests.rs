@@ -5,6 +5,7 @@ use collection::operations::types::VectorParams;
 use collection::optimizers_builder::OptimizersConfig;
 use collection::shards::channel_service::ChannelService;
 use common::cpu::CpuBudget;
+use common::snapshot_manager::{LocalPath, SnapshotStorage};
 use memory::madvise;
 use segment::types::Distance;
 use storage::content_manager::collection_meta_ops::{
@@ -30,6 +31,14 @@ fn test_alias_operation() {
             .to_str()
             .unwrap()
             .to_string(),
+        _snapshot_storage: SnapshotStorage::LocalPath(LocalPath::new(
+            storage_dir
+                .path()
+                .join("snapshots")
+                .to_str()
+                .unwrap()
+                .to_string(),
+        )),
         temp_path: None,
         on_disk_payload: false,
         optimizers: OptimizersConfig {

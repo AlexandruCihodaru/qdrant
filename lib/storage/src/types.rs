@@ -11,11 +11,12 @@ use collection::operations::types::NodeType;
 use collection::optimizers_builder::OptimizersConfig;
 use collection::shards::shard::PeerId;
 use collection::shards::transfer::ShardTransferMethod;
+use common::snapshot_manager::SnapshotStorage;
 use memory::madvise;
 use schemars::JsonSchema;
 use segment::common::anonymize::Anonymize;
 use segment::types::{HnswConfig, QuantizationConfig};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use tonic::transport::Uri;
 use validator::Validate;
 
@@ -54,6 +55,13 @@ pub struct StorageConfig {
     #[serde(default = "default_snapshots_path")]
     #[validate(length(min = 1))]
     pub snapshots_path: String,
+
+    #[serde(
+        deserialize_with = "deserialize_snapshot_path",
+        alias = "s3",
+        alias = "snapshot_path"
+    )]
+    pub _snapshot_storage: SnapshotStorage,
     #[validate(length(min = 1))]
     #[serde(default)]
     pub temp_path: Option<String>,
@@ -88,6 +96,13 @@ pub struct StorageConfig {
     /// Default method used for transferring shards.
     #[serde(default)]
     pub shard_transfer_method: Option<ShardTransferMethod>,
+}
+
+fn deserialize_snapshot_path<'de, D>(deserializer: D) -> Result<SnapshotStorage, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    common::snapshot_manager::deserialize_snapshot_path(deserializer)
 }
 
 impl StorageConfig {
