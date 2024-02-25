@@ -46,7 +46,7 @@ pub struct Collection {
     pub(crate) id: CollectionId,
     pub(crate) shards_holder: Arc<LockedShardHolder>,
     pub(crate) collection_config: Arc<RwLock<CollectionConfig>>,
-    pub(crate) shared_storage_config: Arc<SharedStorageConfig>,
+    pub shared_storage_config: Arc<SharedStorageConfig>,
     pub(crate) payload_index_schema: SaveOnDisk<PayloadIndexSchema>,
     this_peer_id: PeerId,
     path: PathBuf,
